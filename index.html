@@ -15,12 +15,17 @@
         <div>Base HP: <span id="baseHp">100</span></div>
       </div>
       <p class="hint">
-        Click 3 tiles: Number + Number × Number = damage. Damage hits the front enemy. Clear all enemies before they reach your base.
+        Click 3 tiles: Number, Operator, Number (e.g. 3 × 4) to deal damage to the front enemy. Stop them before they reach your base.
       </p>
     </header>
 
     <main>
-      <div id="board"></div>
+      <div id="left-panel">
+        <div id="battlefield">
+          <!-- walking enemies rendered here -->
+        </div>
+        <div id="board"></div>
+      </div>
       <div id="side-panel">
         <h2>Enemies</h2>
         <div id="enemies"></div>
