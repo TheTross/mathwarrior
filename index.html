@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Math Fighter v1</title>
+  <title>Math Fighter v2</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -13,16 +13,17 @@
         <div>Wave: <span id="wave">1</span></div>
         <div>Score: <span id="score">0</span></div>
         <div>Base HP: <span id="baseHp">100</span></div>
+        <div>Sword Lv: <span id="swordLevel">1</span></div>
       </div>
       <p class="hint">
-        Click 3 tiles: Number, Operator, Number (e.g. 3 × 4) to deal damage to the front enemy. Stop them before they reach your base.
+        Click 3 tiles: Number, Operator, Number to swing your sword and hit the front monster. Stop them before they reach your castle.
       </p>
     </header>
 
     <main>
       <div id="left-panel">
         <div id="battlefield">
-          <!-- walking enemies rendered here -->
+          <canvas id="battleCanvas"></canvas>
         </div>
         <div id="board"></div>
       </div>
@@ -31,6 +32,12 @@
         <div id="enemies"></div>
         <button id="nextWaveBtn">Start Next Wave</button>
         <div id="message"></div>
+
+        <div id="meta">
+          <h3>Upgrades</h3>
+          <div>Gold: <span id="gold">0</span></div>
+          <button id="upgradeSwordBtn">Upgrade Sword (20 Gold)</button>
+        </div>
       </div>
     </main>
   </div>
