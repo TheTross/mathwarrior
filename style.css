@@ -43,50 +43,122 @@ main {
   margin-top: 8px;
 }
 
+#left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Battlefield strip where enemies walk */
+#battlefield {
+  position: relative;
+  height: 60px;
+  background: #020617;
+  border-radius: 10px;
+  border: 2px solid #1f2937;
+  overflow: hidden;
+}
+
+/* Enemy “avatar” in battlefield */
+.enemy-sprite {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #ef4444;
+  border: 2px solid #b91c1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fecaca;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(248,113,113,0.8);
+  transition: left 0.4s ease-out, top 0.2s ease-out;
+}
+
+/* Attack animation pulse */
+.attack-effect {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #22c55e;
+  box-shadow: 0 0 15px rgba(34,197,94,0.9);
+  pointer-events: none;
+  animation: attackPulse 0.4s ease-out forwards;
+}
+
+@keyframes attackPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Board and tiles */
+
 #board {
   display: grid;
-  grid-template-columns: repeat(6, 60px);
-  grid-template-rows: repeat(6, 60px);
-  gap: 6px;
-  background: #0b1020;
-  padding: 8px;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  grid-template-columns: repeat(6, 70px);
+  grid-template-rows: repeat(6, 70px);
+  gap: 8px;
+  background: #111827;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
 .tile {
-  width: 60px;
-  height: 60px;
-  border-radius: 6px;
-  background: #151a2c;
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  background: #1f2937;
+  border: 2px solid #374151;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   user-select: none;
-  font-size: 20px;
-  font-weight: 600;
-  transition: transform 0.08s, background 0.08s, box-shadow 0.08s;
+  font-size: 26px;
+  font-weight: 700;
+  color: #e5e7eb;
+  transition: transform 0.08s,
+              background 0.08s,
+              box-shadow 0.08s,
+              border-color 0.08s;
 }
 
 .tile.number {
-  color: #f9fafb;
+  background: #0ea5e9;
+  border-color: #0284c7;
+  color: #0b1120;
 }
 
 .tile.op {
-  color: #facc15;
+  background: #f97316;
+  border-color: #ea580c;
+  color: #0b1120;
 }
 
 .tile.selected {
-  background: #2563eb;
-  box-shadow: 0 0 10px rgba(37,99,235,0.8);
-  transform: translateY(-2px);
+  background: #22c55e;
+  border-color: #16a34a;
+  box-shadow: 0 0 12px rgba(34,197,94,0.9);
+  transform: translateY(-2px) scale(1.03);
 }
 
 .tile.empty {
-  background: #050816;
+  background: #020617;
+  border-color: #020617;
   cursor: default;
 }
+
+/* Side panel */
 
 #side-panel {
   flex: 1;
@@ -166,19 +238,21 @@ main {
   color: #fbbf24;
 }
 
+/* Mobile tweaks */
+
 @media (max-width: 768px) {
   main {
     flex-direction: column;
   }
 
   #board {
-    grid-template-columns: repeat(6, 48px);
-    grid-template-rows: repeat(6, 48px);
+    grid-template-columns: repeat(6, 52px);
+    grid-template-rows: repeat(6, 52px);
   }
 
   .tile {
-    width: 48px;
-    height: 48px;
-    font-size: 16px;
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
   }
 }
