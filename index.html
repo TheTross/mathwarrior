@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Math Fighter v1</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-root">
+    <header>
+      <h1>Math Fighter</h1>
+      <div class="hud">
+        <div>Wave: <span id="wave">1</span></div>
+        <div>Score: <span id="score">0</span></div>
+        <div>Base HP: <span id="baseHp">100</span></div>
+      </div>
+      <p class="hint">
+        Click 3 tiles: Number + Number × Number = damage. Damage hits the front enemy. Clear all enemies before they reach your base.
+      </p>
+    </header>
+
+    <main>
+      <div id="board"></div>
+      <div id="side-panel">
+        <h2>Enemies</h2>
+        <div id="enemies"></div>
+        <button id="nextWaveBtn">Start Next Wave</button>
+        <div id="message"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
