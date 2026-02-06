@@ -1,5 +1,7 @@
-// Math Fighter v1
+// Math Fighter v1 with clearer tiles, walking CPU, and attack animation
+
 const BOARD_SIZE = 6;
+
 const boardEl = document.getElementById("board");
 const enemiesEl = document.getElementById("enemies");
 const waveEl = document.getElementById("wave");
@@ -7,6 +9,7 @@ const scoreEl = document.getElementById("score");
 const baseHpEl = document.getElementById("baseHp");
 const messageEl = document.getElementById("message");
 const nextWaveBtn = document.getElementById("nextWaveBtn");
+const battlefieldEl = document.getElementById("battlefield");
 
 let board = [];
 let selectedTiles = []; // {row, col}
@@ -17,7 +20,8 @@ let baseHp = 100;
 let waveRunning = false;
 let tickInterval = null;
 
-// --- Board setup ---
+// ---------- Board setup ----------
+
 function randomNumber() {
   return Math.floor(Math.random() * 9) + 1;
 }
@@ -74,7 +78,8 @@ function renderBoard() {
   }
 }
 
-// --- Selection + combo logic ---
+// ---------- Selection + combo logic ----------
+
 function onTileClick(row, col) {
   const tile = board[row][col];
   if (!tile || waveRunning === false) {
@@ -102,19 +107,18 @@ function onTileClick(row, col) {
 function attemptCombo() {
   const [a, b, c] = selectedTiles.map(t => board[t.row][t.col]);
 
-  // We want pattern: number, op, number
   if (!(a && b && c)) {
     resetSelection();
     return;
   }
 
+  // enforce Number, Operator, Number
   if (a.type !== "number" || b.type !== "op" || c.type !== "number") {
     showMessage("Combos must be: Number, Operator, Number.", true);
     resetSelection();
     return;
   }
 
-  // Compute damage: a (op) c
   let damage;
   if (b.value === "+") {
     damage = a.value + c.value;
@@ -156,27 +160,30 @@ function collapseAndRefillBoard() {
   }
 }
 
-// --- Enemy + wave logic ---
-function createEnemy(baseHp) {
+// ---------- Enemy + wave logic ----------
+
+function createEnemy(baseHp, index, total) {
   return {
     id: Math.random().toString(36).slice(2),
     maxHp: baseHp,
     hp: baseHp,
-    distance: 10 // turns until reaching base
+    distance: 10,          // logical steps until base
+    x: 20 + index * 40     // starting horizontal position in battlefield
   };
 }
 
 function spawnWave() {
-  const count = 3 + wave; // more enemies per wave
+  const count = 3 + wave;        // more enemies each wave
   const baseHpEnemy = 15 + wave * 5;
   enemies = [];
   for (let i = 0; i < count; i++) {
-    enemies.push(createEnemy(baseHpEnemy));
+    enemies.push(createEnemy(baseHpEnemy, i, count));
   }
   waveRunning = true;
   nextWaveBtn.disabled = true;
   showMessage(`Wave ${wave} started. Build combos to stop them!`);
   renderEnemies();
+  renderEnemySprites();
 
   if (tickInterval) clearInterval(tickInterval);
   tickInterval = setInterval(gameTick, 1500);
@@ -188,6 +195,10 @@ function applyDamage(dmg) {
     return;
   }
   const target = enemies[0];
+
+  // spawn attack animation around the target
+  spawnAttackEffect(target);
+
   target.hp -= dmg;
   if (target.hp <= 0) {
     enemies.shift();
@@ -199,6 +210,7 @@ function applyDamage(dmg) {
     showMessage(`You hit an enemy for ${dmg} damage.`);
   }
   renderEnemies();
+  renderEnemySprites();
 }
 
 function gameTick() {
@@ -206,9 +218,17 @@ function gameTick() {
 
   enemies.forEach(e => {
     e.distance -= 1;
+    // distance 10 -> 0 mapped to a movement from left to right
+    const progress = (10 - e.distance) / 10; // 0..1
+    const battlefieldWidth = battlefieldEl.clientWidth || 320;
+    const startX = 10;
+    const endX = battlefieldWidth - 60; // stop near the board side
+    e.x = startX + progress * (endX - startX);
   });
 
-  // Enemies that reach base
+  renderEnemySprites();
+
+  // Enemies that reached the base
   let reached = enemies.filter(e => e.distance <= 0);
   if (reached.length) {
     const totalDamage = reached.length * 15;
@@ -217,7 +237,6 @@ function gameTick() {
     baseHpEl.textContent = baseHp;
     showMessage(`${reached.length} enemies hit your base for ${totalDamage} damage!`, true);
 
-    // remove them
     enemies = enemies.filter(e => e.distance > 0);
 
     if (baseHp <= 0) {
@@ -226,7 +245,6 @@ function gameTick() {
     }
   }
 
-  // If all enemies dead and none reached base, wave ends
   if (!enemies.length) {
     endWave(true);
     return;
@@ -265,6 +283,42 @@ function renderEnemies() {
   }
 }
 
+// Render walking enemy sprites on battlefield
+function renderEnemySprites() {
+  battlefieldEl.innerHTML = "";
+  enemies.forEach((e, idx) => {
+    const sprite = document.createElement("div");
+    sprite.classList.add("enemy-sprite");
+    sprite.textContent = "CPU";
+
+    const laneY = 10 + (idx % 3) * 15;
+    sprite.style.left = `${e.x}px`;
+    sprite.style.top = `${laneY}px`;
+
+    battlefieldEl.appendChild(sprite);
+  });
+}
+
+// Attack visual effect around target
+function spawnAttackEffect(enemy) {
+  const effect = document.createElement("div");
+  effect.classList.add("attack-effect");
+
+  const rect = battlefieldEl.getBoundingClientRect();
+  const battlefieldWidth = rect.width || 320;
+  const x = enemy.x;
+  const y = rect.height / 2;
+
+  effect.style.left = `${x - 35}px`;
+  effect.style.top = `${y - 35}px`;
+
+  battlefieldEl.appendChild(effect);
+
+  setTimeout(() => {
+    if (effect.parentNode) effect.parentNode.remove();
+  }, 400);
+}
+
 function endWave(success) {
   waveRunning = false;
   clearInterval(tickInterval);
@@ -287,24 +341,26 @@ function endGame() {
   nextWaveBtn.disabled = true;
 }
 
-// --- UI helpers ---
+// ---------- UI helpers ----------
+
 function showMessage(text, isError = false) {
   messageEl.textContent = text;
   messageEl.style.color = isError ? "#f97316" : "#facc15";
 }
 
-// --- Event listeners ---
+// ---------- Events & init ----------
+
 nextWaveBtn.addEventListener("click", () => {
   if (baseHp <= 0) return;
   spawnWave();
 });
 
-// --- Init ---
 function init() {
   fillBoard();
   renderBoard();
   renderEnemies();
-  showMessage("Press 'Start Next Wave' and use Number + Op + Number combos.");
+  renderEnemySprites();
+  showMessage("Press 'Start Next Wave' and use Number, Operator, Number combos.");
 }
 
 init();
