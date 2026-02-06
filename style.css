@@ -49,55 +49,21 @@ main {
   gap: 10px;
 }
 
-/* Battlefield strip where enemies walk */
+/* Battlefield */
+
 #battlefield {
   position: relative;
-  height: 60px;
+  height: 100px;
   background: #020617;
   border-radius: 10px;
   border: 2px solid #1f2937;
   overflow: hidden;
 }
 
-/* Enemy “avatar” in battlefield */
-.enemy-sprite {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  background: #ef4444;
-  border: 2px solid #b91c1c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fecaca;
-  font-size: 18px;
-  font-weight: 700;
-  box-shadow: 0 0 10px rgba(248,113,113,0.8);
-  transition: left 0.4s ease-out, top 0.2s ease-out;
-}
-
-/* Attack animation pulse */
-.attack-effect {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 3px solid #22c55e;
-  box-shadow: 0 0 15px rgba(34,197,94,0.9);
-  pointer-events: none;
-  animation: attackPulse 0.4s ease-out forwards;
-}
-
-@keyframes attackPulse {
-  0% {
-    transform: scale(0.5);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.4);
-    opacity: 0;
-  }
+#battleCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 /* Board and tiles */
@@ -175,7 +141,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 140px;
+  min-height: 120px;
 }
 
 .enemy {
@@ -238,7 +204,38 @@ main {
   color: #fbbf24;
 }
 
-/* Mobile tweaks */
+/* Meta / Upgrades */
+
+#meta {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #1f2937;
+  font-size: 13px;
+}
+
+#upgradeSwordBtn {
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: none;
+  background: #3b82f6;
+  color: #e5e7eb;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.1s, transform 0.08s;
+}
+
+#upgradeSwordBtn:disabled {
+  background: #1f2937;
+  cursor: default;
+}
+
+#upgradeSwordBtn:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Mobile */
 
 @media (max-width: 768px) {
   main {
